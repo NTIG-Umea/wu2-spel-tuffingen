@@ -37,6 +37,7 @@ class PlayScene extends Phaser.Scene {
         // platforms.setCollision(1, true, true);
 
         // skapa en spelare och ge den studs
+        this.foe = this.physics.add.sprite(50, 300, 'foe')
         this.player = this.physics.add.sprite(50, 300, 'player');
         this.player.setBounce(0.1);
         this.player.setCollideWorldBounds(true);
@@ -73,6 +74,7 @@ class PlayScene extends Phaser.Scene {
 
         // krocka med platforms lagret
         this.physics.add.collider(this.player, this.platforms);
+        this.physics.add.collider(this.foe, this.platforms);
 
         // skapa text på spelet, texten är tom
         // textens innehåll sätts med updateText() metoden
@@ -108,6 +110,25 @@ class PlayScene extends Phaser.Scene {
         // följande kod är från det tutorial ni gjort tidigare
         // Control the player with left or right keys
         if (this.cursors.left.isDown) {
+            this.player.setVelocityX(-200);
+            if (this.player.body.onFloor()) {
+                this.player.play('walk', true);
+            }
+        } else if (this.cursors.right.isDown) {
+            this.player.setVelocityX(200);
+            if (this.player.body.onFloor()) {
+                this.player.play('walk', true);
+            }
+        } else {
+            // If no keys are pressed, the player keeps still
+            this.player.setVelocityX(0);
+            // Only show the idle animation if the player is footed
+            // If this is not included, the player would look idle while jumping
+            if (this.player.body.onFloor()) {
+                this.player.play('idle', true);
+            }
+        }
+          if (this.cursors.left.isDown) {
             this.player.setVelocityX(-200);
             if (this.player.body.onFloor()) {
                 this.player.play('walk', true);
