@@ -1,6 +1,6 @@
 # Planering
-movement
-plocka upp saker
-score 
-sämre vision
-hinder
+- []movement
+- []plocka upp saker
+- []score 
+- []sämre vision
+- []hinder

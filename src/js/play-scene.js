@@ -2,27 +2,27 @@ class PlayScene extends Phaser.Scene {
     constructor() {
         super('PlayScene');
     }
-
+    
     create() {
         // variabel för att hålla koll på hur många gånger vi spikat oss själva
         this.spiked = 0;
-
+        
         // ladda spelets bakgrundsbild, statisk
         // setOrigin behöver användas för att den ska ritas från top left
-        this.add.image(0, 0, 'background').setOrigin(0, 0);
-
+        let bg = this.add.image(0, 0, "background").setOrigin(0, 0);
+        
         // skapa en tilemap från JSON filen vi preloadade
         const map = this.make.tilemap({ key: 'map' });
         // ladda in tilesetbilden till vår tilemap
         const tileset = map.addTilesetImage('jefrens_platformer', 'tiles');
-
+        
         // initiera animationer, detta är flyttat till en egen metod
         // för att göra create metoden mindre rörig
         this.initAnims();
-
+        
         // keyboard cursors
         this.cursors = this.input.keyboard.createCursorKeys();
-
+        
         // Ladda lagret Platforms från tilemappen
         // och skapa dessa
         // sätt collisionen
@@ -30,28 +30,30 @@ class PlayScene extends Phaser.Scene {
         this.platforms.setCollisionByExclusion(-1, true);
         // platforms.setCollisionByProperty({ collides: true });
         // this.platforms.setCollisionFromCollisionGroup(
-        //     true,
-        //     true,
-        //     this.platforms
-        // );
-        // platforms.setCollision(1, true, true);
-
-        // skapa en spelare och ge den studs
-        this.foe = this.physics.add.sprite(50, 300, 'foe')
-        this.player = this.physics.add.sprite(50, 300, 'player');
-        this.player.setBounce(0.1);
-        this.player.setCollideWorldBounds(true);
-
-        // skapa en fysik-grupp
-        this.spikes = this.physics.add.group({
-            allowGravity: false,
-            immovable: true
-        });
-
-        // från platforms som skapats från tilemappen
-        // kan vi ladda in andra lager
-        // i tilemappen finns det ett lager Spikes
-        // som innehåller spikarnas position
+            //     true,
+            //     true,
+            //     this.platforms
+            // );
+            // platforms.setCollision(1, true, true);
+            
+            // skapa en spelare och ge den studs
+            this.foe = this.physics.add.sprite(50, 300, 'foe')
+            this.player = this.physics.add.sprite(50, 300, 'player');
+            this.player.setBounce(0.1);
+            this.player.setCollideWorldBounds(false);
+            
+            // skapa en fysik-grupp
+            this.spikes = this.physics.add.group({
+                allowGravity: false,
+                immovable: true
+            });
+            
+            // från platforms som skapats från tilemappen
+            // kan vi ladda in andra lager
+            // i tilemappen finns det ett lager Spikes
+            // som innehåller spikarnas position
+            this.cameras.main.startFollow(this.player);
+            this.cameras.main.setBounds(0,0, 1600, 448);
         console.log(this.platforms);
         map.getObjectLayer('Spikes').objects.forEach((spike) => {
             // iterera över spikarna, skapa spelobjekt
@@ -100,7 +102,9 @@ class PlayScene extends Phaser.Scene {
     // play scenens update metod
     update() {
         // för pause
-        if (this.keyObj.isDown) {
+        
+
+            if (this.keyObj.isDown) {
             // pausa nuvarande scen
             this.scene.pause();
             // starta menyscenene
@@ -121,6 +125,31 @@ class PlayScene extends Phaser.Scene {
             }
         } else {
             // If no keys are pressed, the player keeps still
+            this.player.setVelocityX(0);
+            // Only show the idle animation if the player is footed
+            // If this is not included, the player would look idle while jumping
+            if (this.player.body.onFloor()) {
+                this.player.play('idle', true);
+            }
+        }
+          if (this.cursors.left.isDown) {
+            this.player.setVelocityX(-200);
+            if (this.player.body.onFloor()) {
+                this.player.play('walk', true);
+            }
+        } else if (this.cursors.right.isDown) {
+            this.player.setVelocityX(200);
+            if (this.player.body.onFloor()) {
+                this.player.play('walk', true);
+            }
+        } else {
+            // If no keys are pressed, the player keeps still
+            this.player.setVelocityX(0);
+            // Only show the idle animation if the player is footed
+            // If this is not included, the player would look idle while jumping
+            if (this.player.body.onFloor()) {
+                this.player.play('idle', true);
+            }
             this.player.setVelocityX(0);
             // Only show the idle animation if the player is footed
             // If this is not included, the player would look idle while jumping
