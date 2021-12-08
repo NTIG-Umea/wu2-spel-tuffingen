@@ -10,7 +10,7 @@ class PlayScene extends Phaser.Scene {
         // ladda spelets bakgrundsbild, statisk
         // setOrigin behöver användas för att den ska ritas från top left
         let bg = this.add.image(0, 0, "background").setOrigin(0, 0);
-        
+        bg.setScrollFactor(0);
         // skapa en tilemap från JSON filen vi preloadade
         const map = this.make.tilemap({ key: 'map' });
         // ladda in tilesetbilden till vår tilemap
@@ -40,7 +40,7 @@ class PlayScene extends Phaser.Scene {
             this.foe = this.physics.add.sprite(50, 300, 'foe')
             this.player = this.physics.add.sprite(50, 300, 'player');
             this.player.setBounce(0.1);
-            this.player.setCollideWorldBounds(false);
+            this.player.setCollideWorldBounds(true);
             
             // skapa en fysik-grupp
             this.spikes = this.physics.add.group({
@@ -115,6 +115,7 @@ class PlayScene extends Phaser.Scene {
         // Control the player with left or right keys
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-200);
+            this.physics.world.bounds.setPosition(this.cameras.main.worldView.x, 0);
             if (this.player.body.onFloor()) {
                 this.player.play('walk', true);
             }
