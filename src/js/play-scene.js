@@ -6,7 +6,6 @@ class PlayScene extends Phaser.Scene {
     create() {
         // variabel för att hålla koll på hur många gånger vi spikat oss själva
         this.spiked = 0;
-        
         // ladda spelets bakgrundsbild, statisk
         // setOrigin behöver användas för att den ska ritas från top left
         let bg = this.add.image(0, 0, "background").setOrigin(0, 0);
@@ -28,6 +27,7 @@ class PlayScene extends Phaser.Scene {
         // sätt collisionen
         this.platforms = map.createLayer('Platforms', tileset);
         this.platforms.setCollisionByExclusion(-1, true);
+        
         // platforms.setCollisionByProperty({ collides: true });
         // this.platforms.setCollisionFromCollisionGroup(
             //     true,
@@ -35,12 +35,15 @@ class PlayScene extends Phaser.Scene {
             //     this.platforms
             // );
             // platforms.setCollision(1, true, true);
+           // let vision = this.add.image(0, 0, "vson").setOrigin(0,0);
             
             // skapa en spelare och ge den studs
             this.foe = this.physics.add.sprite(50, 300, 'foe')
             this.player = this.physics.add.sprite(50, 300, 'player');
             this.player.setBounce(0.1);
             this.player.setCollideWorldBounds(true);
+            
+
             
             // skapa en fysik-grupp
             this.spikes = this.physics.add.group({
@@ -110,12 +113,12 @@ class PlayScene extends Phaser.Scene {
             // starta menyscenene
             this.scene.launch('MenuScene');
         }
-
+        this.physics.world.bounds.setPosition(this.cameras.main.worldView.x, 0);
+        
         // följande kod är från det tutorial ni gjort tidigare
         // Control the player with left or right keys
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-200);
-            this.physics.world.bounds.setPosition(this.cameras.main.worldView.x, 0);
             if (this.player.body.onFloor()) {
                 this.player.play('walk', true);
             }
